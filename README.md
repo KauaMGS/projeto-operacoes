@@ -59,7 +59,7 @@ Certifique-se de ter os seguintes itens instalados:
 
 1. **Clone o repositório:**
    ```bash
-   git clone <url-do-repositorio>
+   git clone https://github.com/KauaMGS/projeto-operacoes
    cd projeto-operacoes
    ```
 
