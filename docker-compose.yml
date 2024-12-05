@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: operation_db  
+    volumes:
+      - mysql_data:/var/lib/mysql 
+    networks:
+      - app-net  
+  quarkus:
+    depends_on:
+      mysql:
+        condition: service_healthy  
+    build:
+      context: ./operation-reg
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - 8080:8080
+    environment:
+      - QUARKUS_DATASOURCE_DB_KIND=mysql
+      - QUARKUS_DATASOURCE_USERNAME=root
+      - QUARKUS_DATASOURCE_PASSWORD=1234
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3306/operation_db?createDatabaseIfNotExist=true
+      - QUARKUS_HTTP_CORS=true
+      - QUARKUS_HTTP_CORS_ORIGINS=http://localhost:4200,http://angular:80,http://localhost:80
+      - QUARKUS_HTTP_CORS_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - QUARKUS_HTTP_CORS_HEADERS=accept,authorization,content-type,x-requested-with
+      - QUARKUS_HTTP_CORS_EXPOSED_HEADERS=Content-Disposition
+      - QUARKUS_HTTP_CORS_ACCESS_CONTROL_MAX_AGE=24H
+      - QUARKUS_HTTP_CORS_ACCESS_CONTROL_ALLOW_CREDENTIALS=true
+      - QUARKUS_DATASOURCE_JDBC_ACQUISITION_TIMEOUT=30
+      - QUARKUS_DATASOURCE_JDBC_INITIAL_SIZE=1
+      - QUARKUS_DATASOURCE_JDBC_MIN_SIZE=1
+    networks:
+      - app-net    
+  angular:
+    depends_on:
+      - quarkus 
+    build: ./opersave
+    ports:
+      - 4200:80
+    networks:
+      - app-net  
+volumes:
+  mysql_data:  
+  
+networks:
+  app-net:
+    driver: bridge  
