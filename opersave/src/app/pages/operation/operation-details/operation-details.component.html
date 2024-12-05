@@ -1,0 +1,178 @@
+<div class="modal fade" id="detailsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      
+      <div class="modal-header flex-column position-relative">
+        <div class="d-flex justify-content-between w-100">
+          <h1 class="modal-title text-center fs-3 w-100" id="staticBackdropLabel">{{ operation?.name }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="cancelEdit()" aria-label="Close"></button>
+        </div>
+
+        
+        <div class="w-100 mt-4">
+          <ul class="nav nav-underline mb-0" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="homeTab" href="#home" role="tab" data-bs-toggle="tab" aria-selected="true">Informações</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="requisitionResponseTab" href="#requisitionRes" role="tab" data-bs-toggle="tab" aria-selected="false">Requisições e Respostas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="opLogsTab" href="#operationLogs" role="tab" data-bs-toggle="tab" aria-selected="false">Logs</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      
+      <div class="modal-body">
+        <div class="tab-content">
+          
+          <form [formGroup]="updForm" class="tab-content">
+
+            <div id="home" class="tab-pane fade show active" role="tabpanel">
+              <div class="form-group mb-3">
+                <label>Nome:</label>
+                <input type="text" formControlName="name" class="form-control" [class.is-invalid]="updForm.get('name')?.invalid && updForm.get('name')?.touched" />
+              </div>
+              <div class="form-group mb-3">
+                <label>Categoria:</label>
+                <input type="text" formControlName="category" class="form-control" [class.is-invalid]="updForm.get('category')?.invalid && updForm.get('category')?.touched" />
+              </div>
+              <div class="form-group mb-3">
+                <label>Descrição:</label>
+                <textarea class="form-control" formControlName="description" rows="4" [class.is-invalid]="updForm.get('description')?.invalid && updForm.get('description')?.touched" ></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-check-label">Precisa de permissões:</label>
+                <input type="checkbox" formControlName="permissionsNeeded" class="form-check-input me-2 ms-2" (change)="onPermissionsNeededChange()" />
+              </div>
+              <div class="form-group mb-3" *ngIf="permissionsNeededAux">
+                <label>Permissões:</label>
+                <textarea class="form-control" formControlName="permissions" rows="3" [class.is-invalid]="updForm.get('permissions')?.invalid && updForm.get('permissions')?.touched" ></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-check-label">Acesso restrito:</label>
+                <input type="checkbox" formControlName="restrictAccess" class="form-check-input me-2 ms-2"  />
+              </div>
+            </div>
+          
+
+          
+            <div class="tab-pane fade" id="requisitionRes" role="tabpanel" aria-labelledby="requisitionResponse">
+              
+              <div class="form-group mb-4">
+                <label class="form-label bold">Requisição</label>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="text-center">Nome</th>
+                        <th class="text-center">Tipo</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                      <tbody formArrayName="request">
+                        <tr *ngFor="let field of request.controls; let i = index" [formGroupName]="i">
+                          <td><input formControlName="fieldName" class="form-control" /></td>
+                          <td><input formControlName="fieldType" class="form-control" /></td>
+                          <td>
+                            <button type="button" class="btn btn-danger" [disabled]="!editing" (click)="removeField('request', i)">-</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                  </table>
+                  <button type="button" class="btn btn-primary" [disabled]="!editing" (click)="addField('request')">+</button>
+                </div>
+              </div>
+
+            
+            <div class="form-group">
+              <label class="form-label bold">Resposta</label>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Nome</th>
+                      <th class="text-center">Tipo</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="response">
+                    <tr *ngFor="let field of response.controls; let i = index" [formGroupName]="i">
+                      <td><input formControlName="fieldName" class="form-control" /></td>
+                      <td><input formControlName="fieldType" class="form-control" /></td>
+                      <td>
+                        <button type="button" class="btn btn-danger" [disabled]="!editing" (click)="removeField('response', i)">-</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" [disabled]="!editing" (click)="addField('response')">+</button>
+              </div>
+            </div>
+            </div>
+
+            <div class="tab-pane fade" id="operationLogs" role="tabpanel" aria-labelledby="operationLogs">
+              <table class="table table-rounded table-hover table-sm text-center">
+                <thead class="table-light">
+                <tr>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Campos modificados</th>
+                    <th scope="col">Data</th>
+                </tr>
+                </thead>
+                <tbody table-group-divider>
+                    <tr *ngFor="let log of logs">
+                        <th>{{ log.type }}</th>
+                        <td>
+                          <button 
+                            class="btn btn-sm btn-outline-primary" 
+                            *ngIf="log.type === 'UPDATE'"
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            [attr.data-bs-target]="'#logDetails' + log.id">
+                            Ver Detalhes
+                          </button>
+                          <div class="collapse" [id]="'logDetails' + log.id">
+                            <table class="table table-bordered table-sm mt-2">
+                              <thead>
+                                <tr>
+                                  <th>Campo</th>
+                                  <th>Valor Antigo</th>
+                                  <th>Valor Novo</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let field of log.modifiedFields">
+                                  <td>{{ field.fieldName }}</td>
+                                  <td>{{ field.oldValue }}</td>
+                                  <td>{{ field.newValue }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                        <td>{{ formatTimestamp(log.timestamp) }}</td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </form>
+
+        </div>
+      </div>
+
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" *ngIf="!editing" (click)="deleteOperation(operation!.id)">Excluir</button>
+        <button type="button" class="btn btn-primary" *ngIf="!editing" (click)="enableToEdit()">Editar</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" *ngIf="!editing">Fechar</button>
+        <button type="button" class="btn btn-danger" *ngIf="editing" (click)="cancelEdit()">Cancelar</button>
+        <button type="submit" class="btn btn-success" *ngIf="editing" (click)="onSubmit()">Concluir</button>
+      </div>
+
+    </div>
+  </div>
+</div>

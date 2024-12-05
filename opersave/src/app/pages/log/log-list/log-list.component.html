@@ -1,0 +1,49 @@
+<div class="container-fluid">
+  <table class="table table-rounded table-hover table-sm text-center">
+      <thead class="table-light">
+      <tr>
+          <th scope="col">Id da operação</th>
+          <th scope="col">Operação</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Campos modificados</th>
+          <th scope="col">Data</th>
+      </tr>
+      </thead>
+      <tbody table-group-divider>
+          <tr *ngFor="let log of logs">
+              <th>{{ log.operation }}</th>
+              <td>{{ log.operationName }}</td>
+              <td>{{ log.type }}</td>
+              <td>
+                  <button 
+                    class="btn btn-sm btn-outline-primary" 
+                    *ngIf="log.type === 'UPDATE'"
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    [attr.data-bs-target]="'#logDetails' + log.id">
+                    Detalhes
+                  </button>
+                  <div class="collapse" [id]="'logDetails' + log.id">
+                    <table class="table table-bordered table-sm mt-2">
+                      <thead>
+                        <tr>
+                          <th>Campo</th>
+                          <th>Valor Antigo</th>
+                          <th>Valor Novo</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let field of log.modifiedFields">
+                          <td>{{ field.fieldName }}</td>
+                          <td>{{ field.oldValue }}</td>
+                          <td>{{ field.newValue }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+              </td>
+              <td>{{ formatTimestamp(log.timestamp) }}</td>
+          </tr>
+      </tbody>
+  </table>
+</div>

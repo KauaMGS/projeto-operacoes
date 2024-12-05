@@ -1,0 +1,7 @@
+<div class="d-flex align-items-center p-3 mt-5">  
+    <app-header class="me-auto"></app-header>
+    <app-search class="w-50 me-4" (emmitSearch)="updateSearchQuery($event)"></app-search>
+    <button class="btn btn-primary" (click)="openCreatePage()">Nova operação</button>
+</div>
+
+<app-operation-list [searchQuery]="searchQuery"></app-operation-list>

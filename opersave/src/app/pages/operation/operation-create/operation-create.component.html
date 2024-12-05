@@ -1,0 +1,248 @@
+<div class="mt-4">
+  <h1 class="text-center mb-5">Criar operação</h1>
+
+  <div class="text-center mt-2 mb-4">
+    <span class="active-step">
+      1. Dados da operação
+    </span>
+    <span [ngClass]="{'non-selected-step': currentTab < 1, 'active-step': currentTab >= 1}">
+      2. Acesso restrito
+    </span>
+    <span [ngClass]="{'non-selected-step': currentTab < 2, 'active-step': currentTab >= 2}">
+      3. Permissões
+    </span>
+    <span [ngClass]="{'non-selected-step': currentTab < 3, 'active-step': currentTab >= 3}">
+      4. Requisição e resposta
+    </span>
+    <span [ngClass]="{'non-selected-step': currentTab < 4, 'active-step': currentTab === 4}">
+      5. Revisão
+    </span>
+  </div>
+</div>
+
+<div class="container d-flex align-items-center">
+  <form
+    [formGroup]="regForm"
+    (ngSubmit)="onSubmit()"
+    class="bg-white p-4 w-100"
+    style="max-width: 600px; position: relative"
+  >
+
+    <div class="tab-container">
+      <div class="tab" [ngClass]="{ active: currentTab === 0 }">
+        <div class="mb-4">
+          <label class="form-label">Nome</label>
+          <input placeholder="Nome da operação" formControlName="name" class="form-control" [class.is-invalid]="regForm.get('name')?.invalid && regForm.get('name')?.touched" />
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Categoria</label>
+          <input placeholder="Categoria da operação" formControlName="category" class="form-control" [class.is-invalid]="regForm.get('category')?.invalid && regForm.get('category')?.touched "/>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Descrição</label>
+          <textarea placeholder="Descrição da operação" formControlName="description" rows="5" class="form-control" [class.is-invalid]="regForm.get('description')?.invalid && regForm.get('description')?.touched"></textarea>
+        </div>
+      </div>
+
+      <div class="tab" [ngClass]="{ active: currentTab === 1 }">
+        <div class="mb-4">
+          <label class="form-label">
+            Essa operação possui acesso restrito? (ex: informação sensível ou crucial)?
+          </label>
+          <div class="d-flex justify-content-center align-items-center mb-2">
+            <input type="checkbox" formControlName="restrictAccess" class="form-check-input me-2" />
+            <label class="form-check-label"> Restringir acesso </label>
+          </div>
+          <small class="form-text text-muted">
+            (Se habilitado, essa operação será bloqueada para visualização ou modificação sem privilégios administrador)
+          </small>
+        </div>
+      </div>
+
+      <div class="tab" [ngClass]="{ active: currentTab === 2 }">
+        <div class="mb-4">
+          <div class="form-check d-flex justify-content-center mb-3">
+            <input type="checkbox" formControlName="permissionsNeeded" class="form-check-input me-2" />
+            <label class="form-check-label">
+              Essa operação possui permissões?
+            </label>
+          </div>
+
+          <div *ngIf="regForm.get('permissionsNeeded')?.value" class="mt-3">
+            <label class="form-label">Permissões</label>
+            <textarea placeholder="Permissões" formControlName="permissions" class="form-control" rows="4" [class.is-invalid]="regForm.get('permissions')?.invalid && regForm.get('permissions')?.touched"></textarea>
+            <small class="form-text text-muted">
+              Se essa operação possui permissões especiais, por-favor, especifique-as aqui.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab" [ngClass]="{ active: currentTab === 3 }">
+        <div class="mb-4">
+          <label class="form-label bold">Requisição</label>
+          <div class="table-container">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">Nome</th>
+                    <th class="text-center">Tipo</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="request">
+                  <tr *ngFor="let field of request.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <input formControlName="fieldName" class="form-control" />
+                    </td>
+                    <td>
+                      <input formControlName="fieldType" class="form-control" />
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-danger"
+                        (click)="removeField('request', i)"
+                      >
+                        -
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="addField('request')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-4 mt-5">
+            <label class="form-label bold">Resposta</label>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">Nome</th>
+                    <th class="text-center">Tipo</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="response">
+                  <tr *ngFor="let field of response.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <input formControlName="fieldName" class="form-control" />
+                    </td>
+                    <td>
+                      <input formControlName="fieldType" class="form-control" />
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-danger"
+                        (click)="removeField('response', i)"
+                      >
+                        -
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="addField('response')"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4 tab" [ngClass]="{ active: currentTab === 4 }">
+      <h3 class="text-center">Resumo da Operação</h3>
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Nome:</div>
+            <div class="col-8">{{ getOperationSummary().name }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Categoria:</div>
+            <div class="col-8">{{ getOperationSummary().category }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Descrição:</div>
+            <div class="col-8">{{ getOperationSummary().description }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Acesso Restrito:</div>
+            <div class="col-8">{{ getOperationSummary().restrictAccess ? 'Sim' : 'Não' }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Permissões Necessárias:</div>
+            <div class="col-8">{{ getOperationSummary().permissionsNeeded ? 'Sim' : 'Não' }}</div>
+          </div>
+          <div class="row mb-3" *ngIf="getOperationSummary().permissionsNeeded">
+            <div class="col-4 font-weight-bold">Permissões:</div>
+            <div class="col-8">{{ getOperationSummary().permissions }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Requisição:</div>
+            <div class="col-8">
+              <ul>
+                <li *ngFor="let field of getOperationSummary().request.fields">
+                  {{ field.fieldName }} ({{ field.fieldType }})
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 font-weight-bold">Resposta:</div>
+            <div class="col-8">
+              <ul>
+                <li *ngFor="let field of getOperationSummary().response.fields">
+                  {{ field.fieldName }} ({{ field.fieldType }})
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+
+    <div class="buttons d-flex justify-content-center">
+      <button type="button" (click)="cancelOperation()" class="btn btn-secondary">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        (click)="prevStep()"
+        class="btn btn-outline-primary"
+        [disabled]="currentTab === 0"
+      >
+        Voltar
+      </button>
+      <button
+        type="button"
+        (click)="nextStep()"
+        class="btn btn-primary"
+        *ngIf="currentTab < 4"
+      >
+        Próximo
+      </button>
+      <button type="submit" class="btn btn-primary" *ngIf="currentTab === 4">
+        Concluir
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,76 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 1rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.tab {
+  display: none;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.tab.active {
+  display: flex;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  position: sticky;
+  bottom: 0;
+  padding-bottom: 1rem;
+  background-color: white;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.bold {
+  font-weight: bold;
+  font-size: larger;
+}
+
+table {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.active-step {
+  color: #0a58ca;
+  padding-right: 30px;
+  border-bottom: 4px solid #0a58ca;
+  margin-right: 10px;
+}
+
+.non-selected-step {
+  color: #d5d7dab1;
+  padding-right: 30px;
+  border-bottom: 4px solid #d5d7dab1;
+  margin-right: 10px;
+}

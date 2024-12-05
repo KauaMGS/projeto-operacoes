@@ -1,0 +1,31 @@
+<div class="container-fluid">
+    <table class="table table-rounded table-hover table-sm text-center">
+        <thead class="table-light">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Acesso restrito</th>
+            <th scope="col">Detalhes</th>
+        </tr>
+        </thead>
+        <tbody table-group-divider>
+            <tr *ngFor="let operation of operations">
+                <th scope="row">{{ operation.id }}</th>
+                <td>{{ operation.name }}</td>
+                <td>{{ operation.category }}</td>
+                <td>{{ operation.restrictAccess ? 'Sim' : 'Não' }}</td>
+                <td>
+                    <a *ngIf="!operation.restrictAccess" data-bs-toggle="modal" data-bs-target="#detailsModal" (click)="selectOperation(operation.id)">
+                        <img src="../../../../assets/icons/visualizar.png" alt="View icon">
+                    </a>
+                    <a *ngIf="operation.restrictAccess" (click)="isRestrictAccess()">
+                        <img src="../../../../assets/icons/visualizar.png" alt="View icon">
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<app-operation-details [selectedId]="selectedOperationId" (operationUpdated)="loadOperations()"></app-operation-details>

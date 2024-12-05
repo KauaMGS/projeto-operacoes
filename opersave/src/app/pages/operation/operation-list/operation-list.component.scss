@@ -1,0 +1,16 @@
+.table-rounded{
+    border-radius: 6px; 
+    overflow: hidden; 
+}
+
+.table tbody tr {
+    height: 50px; 
+}
+
+.table th, .table td {
+    vertical-align: middle;  
+}
+
+a {
+    cursor: pointer;
+}
